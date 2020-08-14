@@ -43,12 +43,23 @@ public class DefaultRouter implements Router {
         return Optional.of(handler);
     }
 
-    static class FilterHandler {
+    abstract static class BaseHandler {
         Handler<?> handler;
+
+        private  BaseHandler(Handler<?> handler) {
+            this.handler = handler;
+        }
+
+        public Object handle(RequestContext ctx) {
+            return handler.service(ctx);
+        }
+    }
+
+    static class FilterHandler extends BaseHandler {
         List<Interceptor> interceptors;
 
         FilterHandler(Handler<?> handler) {
-            this.handler = handler;
+            super(handler);
         }
 
         private void addInterceptor(Interceptor interceptor) {
